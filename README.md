@@ -9,42 +9,44 @@
 ![Windows](https://img.shields.io/badge/Windows-Desktop-0078D4?style=for-the-badge&logo=windows&logoColor=white)
 ![Riverpod](https://img.shields.io/badge/Riverpod-2.x-00BCD4?style=for-the-badge)
 
-**نظام إدارة صيدلية متكامل — سريع، احترافي، يعمل بدون إنترنت**
+**A complete pharmacy management desktop app — fast, professional, works fully offline.**
+
+[Features](#-features) · [Getting Started](#-getting-started) · [Architecture](#%EF%B8%8F-architecture) · [Database](#%EF%B8%8F-database-schema) · [Design System](#-design-system)
 
 </div>
 
 ---
 
-## ✨ الميزات
+## ✨ Features
 
-| الوحدة | الوصف |
-|--------|--------|
-| 📦 **Inventory** | إدارة كاملة للأدوية — بحث، فلتر، شريط مخزون، تتبع انتهاء الصلاحية |
-| 🧾 **Sales (POS)** | فواتير مع بحث تلقائي للدواء، خصم، طرق دفع متعددة، خصم تلقائي من المخزون |
-| 🛒 **Purchases** | طلبات شراء من الموردين، استلام مخزون، تحديث تلقائي للمستودع |
-| 👥 **Customers** | ملفات العملاء مع تتبع الرصيد وسجل المشتريات |
-| 🏭 **Suppliers** | إدارة الموردين مع الرصيد المستحق |
-| 👨‍💼 **Employees** | ملفات الموظفين، الأدوار، الرواتب، الصلاحيات |
-| 💰 **Treasury** | دفتر الإيرادات والمصروفات مرتبط تلقائياً بالمبيعات |
-| 📊 **Reports** | تحليلات المبيعات، أعلى الأدوية مبيعاً، مخططات الإيرادات |
-| ⚠️ **Expiry Alerts** | تنبيهات الأدوية المنتهية أو القريبة من الانتهاء |
-| 🔖 **Barcode** | مولد باركود وتصدير PDF جاهز للطباعة |
-| 🔄 **Alternatives** | إيجاد بدائل الدواء بناءً على المادة الفعّالة |
-| 🔐 **Permissions** | تحكم في صلاحيات كل موظف لكل وحدة |
-| ⚙️ **Settings** | اسم الصيدلية، العملة، نسبة الضريبة، النسخ الاحتياطي |
-| 📈 **Accounting** | نظرة عامة على الأرباح والخسائر والميزانية العمومية |
+| Module | Description |
+|--------|-------------|
+| 📦 **Inventory** | Full medicine CRUD — search, filter by status & category, visual stock bar, expiry date tracking |
+| 🧾 **Sales (POS)** | Invoice creation with autocomplete search, per-item discount, multiple payment methods, automatic stock deduction |
+| 🛒 **Purchases** | Purchase orders from suppliers, receive stock, automatic inventory update on receipt |
+| 👥 **Customers** | Customer profiles with outstanding balance tracking and purchase history |
+| 🏭 **Suppliers** | Supplier management with payable balance |
+| 👨‍💼 **Employees** | Staff profiles, roles, salaries, join dates, and access permissions |
+| 💰 **Treasury** | Income/expense ledger auto-linked to every sale — real-time cash balance |
+| 📊 **Reports** | Sales analytics, top medicines by revenue, revenue vs. cost charts |
+| ⚠️ **Expiry Alerts** | Medicines expired or expiring within 30 days, color-coded by urgency |
+| 🔖 **Barcode** | Barcode label generator with printer-ready PDF export |
+| 🔄 **Alternatives** | Find alternative medicines by active ingredient |
+| 🔐 **Permissions** | Per-employee module access control |
+| ⚙️ **Settings** | Pharmacy name, currency, tax rate, low-stock threshold, backup & restore |
+| 📈 **Accounting** | Profit/loss overview and balance sheet snapshot |
 
 ---
 
-## 🚀 تشغيل المشروع
+## 🚀 Getting Started
 
-### المتطلبات
+### Prerequisites
 
-- [Flutter SDK](https://flutter.dev/docs/get-started/install) نسخة 3.0 أو أحدث
-- Windows 10/11
-- Visual Studio 2022 مع **Desktop development with C++**
+- [Flutter SDK](https://flutter.dev/docs/get-started/install) 3.0 or later
+- Windows 10 / 11
+- Visual Studio 2022 with the **Desktop development with C++** workload
 
-### التشغيل
+### Run in Debug Mode
 
 ```bash
 git clone https://github.com/ainzowork-gif/smart-cure.git
@@ -53,16 +55,18 @@ flutter pub get
 flutter run -d windows
 ```
 
-### بناء الـ EXE النهائي
+Hot-reload: press `r` · Hot-restart: `R` · Quit: `q`
+
+### Build Release EXE
 
 ```bash
 flutter build windows --release
-# الناتج: build/windows/x64/runner/Release/smart_cure.exe
+# Output: build\windows\x64\runner\Release\smart_cure.exe
 ```
 
-### إعادة ضبط قاعدة البيانات
+### Reset the Database
 
-احذف الملف التالي للبدء من جديد مع بيانات تجريبية:
+Delete the local SQLite file to start fresh with sample seed data:
 
 ```
 %USERPROFILE%\Documents\smart_cure\smart_cure.db
@@ -70,43 +74,43 @@ flutter build windows --release
 
 ---
 
-## 🏗️ هيكل المشروع
+## 🏗️ Project Structure
 
 ```
 smart_cure/
 ├── lib/
-│   ├── main.dart                    # نقطة البداية: sqfliteFfiInit + ProviderScope
-│   ├── app.dart                     # AppShell: Sidebar + Screen switcher + StatusBar
+│   ├── main.dart                    # Entry: sqfliteFfiInit() + ProviderScope
+│   ├── app.dart                     # AppShell: Sidebar | content area + StatusBar
 │   │
 │   ├── core/
 │   │   ├── constants/
-│   │   │   ├── app_colors.dart      # ألوان التصميم (blue900 → gray50)
-│   │   │   └── app_theme.dart       # خطوط DM Sans + DM Mono
+│   │   │   ├── app_colors.dart      # Design tokens (blue900 → gray50)
+│   │   │   └── app_theme.dart       # DM Sans + DM Mono text styles
 │   │   ├── database/
-│   │   │   └── database_helper.dart # SQLite singleton — كل عمليات CRUD
+│   │   │   └── database_helper.dart # SQLite singleton — insert/update/delete/query
 │   │   └── utils/
 │   │       └── helpers.dart         # formatCurrency, formatDate, generateId (UUID v4)
 │   │
-│   ├── models/                      # Dart خالص — fromMap / toMap / copyWith
+│   ├── models/                      # Pure Dart — fromMap / toMap / copyWith
 │   │   ├── medicine.dart
 │   │   ├── sale.dart                # Sale + SaleItem
 │   │   ├── purchase.dart            # Purchase + PurchaseItem
 │   │   ├── customer.dart
 │   │   ├── supplier.dart
 │   │   ├── employee.dart
-│   │   └── treasury.dart
+│   │   └── treasury.dart            # TreasuryTransaction
 │   │
-│   ├── providers/                   # Riverpod AsyncNotifier لكل وحدة
-│   │   ├── app_provider.dart        # AppScreen enum + التنقل + البحث العام
+│   ├── providers/                   # Riverpod AsyncNotifier per module
+│   │   ├── app_provider.dart        # AppScreen enum + activeScreenProvider + searchQueryProvider
 │   │   ├── inventory_provider.dart
-│   │   ├── sales_provider.dart      # createSale → فاتورة + خزينة + مخزون
+│   │   ├── sales_provider.dart      # createSale → invoice + treasury + stock (atomic)
 │   │   ├── purchases_provider.dart
 │   │   ├── customers_provider.dart
 │   │   ├── suppliers_provider.dart
 │   │   ├── employees_provider.dart
 │   │   └── treasury_provider.dart
 │   │
-│   ├── screens/                     # شاشة لكل وحدة (ConsumerWidget)
+│   ├── screens/                     # One ConsumerWidget per module
 │   │   ├── dashboard_screen.dart
 │   │   ├── inventory_screen.dart
 │   │   ├── sales_screen.dart
@@ -123,113 +127,126 @@ smart_cure/
 │   │   ├── permissions_screen.dart
 │   │   └── settings_screen.dart
 │   │
-│   └── widgets/shared/              # مكونات نظام التصميم
-│       ├── sc_panel.dart            # بطاقة بعنوان + محتوى (LayoutBuilder-aware)
-│       ├── sc_button.dart           # primary / success / ghost
-│       ├── sc_text_field.dart       # حقل إدخال موحد
-│       ├── sc_badge.dart            # success / warning / danger / info
-│       ├── stock_bar.dart           # شريط مستوى المخزون
-│       ├── kpi_card.dart            # بطاقة مؤشر الداشبورد
-│       ├── topbar.dart              # العنوان + البحث + جرس الإشعارات
-│       ├── sidebar.dart             # شريط التنقل الجانبي
-│       └── status_bar.dart          # الشريط السفلي (وقت + حالة DB)
+│   └── widgets/shared/              # Design-system components
+│       ├── sc_panel.dart            # Card with header + body (LayoutBuilder-aware)
+│       ├── sc_button.dart           # primary / success / ghost variants
+│       ├── sc_text_field.dart       # Consistent form input wrapper
+│       ├── sc_badge.dart            # success / warning / danger / info status chip
+│       ├── stock_bar.dart           # Visual stock level bar
+│       ├── kpi_card.dart            # Dashboard KPI metric card
+│       ├── topbar.dart              # Title + breadcrumb + search + notification bell
+│       ├── sidebar.dart             # Fixed navigation rail
+│       └── status_bar.dart          # Bottom bar with clock + DB status
 │
-└── windows/                         # مشغّل Windows (CMake)
+└── windows/                         # Windows runner (CMake)
 ```
 
 ---
 
 ## ⚙️ Architecture
 
-### إدارة الحالة — Riverpod
+### State Management — Riverpod
 
-كل وحدة تتبع نفس النمط:
+Every data module follows the same pattern:
 
 ```dart
 final inventoryProvider =
     AsyncNotifierProvider<InventoryNotifier, List<Medicine>>(InventoryNotifier.new);
 
 class InventoryNotifier extends AsyncNotifier<List<Medicine>> {
-  Future<List<Medicine>> build() => _load();       // يُشغَّل تلقائياً
-  Future<void> add(Medicine m)   async { ... refresh(); }
-  Future<void> save(Medicine m)  async { ... refresh(); } // "save" وليس "update"
-  Future<void> delete(String id) async { ... refresh(); }
+  Future<List<Medicine>> build() => _load();       // runs automatically on first watch
+  Future<void> add(Medicine m)   async { ... await refresh(); }
+  Future<void> save(Medicine m)  async { ... await refresh(); } // NOTE: "save" not "update"
+  Future<void> delete(String id) async { ... await refresh(); }
 }
 ```
 
-> **ملاحظة:** اسم الدالة `save` وليس `update` لأن `AsyncNotifier` يحتوي على دالة `update()` مدمجة.
+> **Important:** All CRUD update methods are named `save()`, not `update()` — Riverpod's `AsyncNotifier` base class already has a built-in `update()` method, which would conflict.
 
-### التنقل
+### Navigation
+
+Navigation is driven by a single `StateProvider<AppScreen>`. No routing package needed:
 
 ```dart
-// الانتقال لأي شاشة من أي مكان
+// Navigate to any screen from anywhere
 ref.read(activeScreenProvider.notifier).state = AppScreen.inventory;
 ```
 
-### تسلسل عمليات إنشاء الفاتورة
+### Sale Creation — Cascading Side Effects
 
-`SalesNotifier.createSale()` تنفّذ 3 عمليات دفعة واحدة:
+`SalesNotifier.createSale()` performs three operations atomically:
 
-1. ✅ تُدرج الفاتورة وبنودها في `sales` و `sale_items`
-2. ✅ تستدعي `adjustStock(-qty)` لكل دواء
-3. ✅ تُنشئ إيراداً تلقائياً في `treasury`
+1. ✅ Inserts the sale and its line items into `sales` / `sale_items`
+2. ✅ Calls `inventoryProvider.adjustStock(-qty)` for each line item
+3. ✅ Creates an income entry automatically in `treasury`
 
 ---
 
-## 🗄️ قاعدة البيانات
+## 🗄️ Database Schema
 
-SQLite محلي — لا يحتاج إنترنت أو سيرفر.
+Local SQLite via `sqflite_common_ffi` — no server or internet connection required.
 
-| الجدول | الحقول الرئيسية |
-|--------|----------------|
+| Table | Key Fields |
+|-------|-----------|
 | `medicines` | id, name, category, barcode, batch_no, expiry_date, purchase_price, sale_price, quantity, min_quantity, active_ingredient |
 | `sales` | id, invoice_no, customer_name, total, discount, paid, status, payment_method |
-| `sale_items` | id, sale_id, medicine_id, quantity, unit_price |
+| `sale_items` | id, sale_id, medicine_id, quantity, unit_price, discount |
 | `purchases` | id, po_no, supplier_name, total, paid, status, due_date |
 | `purchase_items` | id, purchase_id, medicine_id, quantity, unit_cost |
 | `customers` | id, name, phone, email, balance |
 | `suppliers` | id, name, contact_person, phone, balance |
 | `employees` | id, name, role, salary, permissions, active |
-| `treasury` | id, type (income/expense), category, amount, balance_after |
-| `settings` | key, value |
+| `treasury` | id, type (income/expense), category, amount, balance_after, reference_id |
+| `settings` | key, value (pharmacy_name, currency, tax_rate, …) |
 
-> جميع الـ IDs بصيغة UUID v4 (32 حرف hex). التواريخ مخزنة كـ ISO-8601.
-
----
-
-## 📦 المكتبات
-
-| المكتبة | الغرض |
-|---------|-------|
-| `flutter_riverpod` | إدارة الحالة |
-| `sqflite_common_ffi` | SQLite على Windows/Linux/macOS |
-| `path_provider` | مسار قاعدة البيانات |
-| `google_fonts` | خطوط DM Sans + DM Mono |
-| `intl` | تنسيق العملة والتاريخ |
-| `uuid` | توليد معرّفات فريدة |
-| `pdf` + `printing` | تصدير PDF (باركود، فواتير) |
-| `fl_chart` | الرسوم البيانية |
-| `shared_preferences` | إعدادات محلية |
+> All IDs are UUID v4 (32-char hex). Dates are stored as ISO-8601 strings. Foreign keys are enabled via `PRAGMA foreign_keys = ON`.
 
 ---
 
-## 🎨 نظام التصميم
+## 📦 Dependencies
 
-| المتغير | القيمة | الاستخدام |
-|---------|--------|-----------|
-| `blue900` | `#0C2D6B` | خلفية الشريط الجانبي |
-| `blue600` | `#2563EB` | الإجراءات الرئيسية |
-| `green600` | `#16A34A` | نجاح، متوفر في المخزون |
-| `amber500` | `#F59E0B` | تحذير، مخزون منخفض |
-| `red500` | `#EF4444` | خطر، منتهي الصلاحية |
-| `gray50` | `#F9FAFB` | خلفية المحتوى |
+| Package | Purpose |
+|---------|---------|
+| `flutter_riverpod` | State management |
+| `sqflite_common_ffi` | SQLite on Windows / Linux / macOS |
+| `path_provider` | Resolve app documents directory for DB path |
+| `google_fonts` | DM Sans + DM Mono typography |
+| `intl` | Currency and date formatting |
+| `uuid` | UUID v4 ID generation |
+| `pdf` + `printing` | PDF export for barcode labels and invoices |
+| `fl_chart` | Charts in Reports and Dashboard |
+| `shared_preferences` | Lightweight local settings storage |
 
-**الخطوط:** DM Sans لنصوص الواجهة · DM Mono للأسعار والأكواد والمعرّفات
+---
+
+## 🎨 Design System
+
+### Color Tokens
+
+| Token | Hex | Usage |
+|-------|-----|-------|
+| `blue900` | `#0C2D6B` | Sidebar background |
+| `blue600` | `#2563EB` | Primary actions, active states |
+| `green600` | `#16A34A` | Success, in-stock status |
+| `amber500` | `#F59E0B` | Warning, low stock, near expiry |
+| `red500` | `#EF4444` | Danger, expired medicines |
+| `gray50` | `#F9FAFB` | Main content background |
+
+### Typography
+
+- **DM Sans** — all UI text (labels, headings, body)
+- **DM Mono** — prices, barcodes, IDs, numeric codes
+
+---
+
+## 📄 License
+
+Private project — all rights reserved.
 
 ---
 
 <div align="center">
 
-Built with Flutter 💙 · Local-first · No internet required
+Built with Flutter 💙 &nbsp;·&nbsp; Local-first &nbsp;·&nbsp; No internet required
 
 </div>
